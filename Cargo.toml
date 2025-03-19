@@ -6,3 +6,5 @@ edition = "2024"
 [dependencies]
 thiserror = "*"
 bytes = { version = "*", features = ["serde"] }
+clap = { version = "*", features = ["derive"] }
+leveldb = "*"
