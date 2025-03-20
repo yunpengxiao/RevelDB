@@ -1,16 +1,11 @@
-use std::path::Path;
-
 use clap::Parser;
 use leveldb::database::Database as DatabaseC;
 use leveldb::kv::KV;
 use leveldb::options::{Options, ReadOptions, WriteOptions};
+use std::path::Path;
 
-use crate::database::Database;
-
-mod database;
-mod log_writter;
-mod mem_table;
-mod write_batch;
+mod core;
+use crate::core::database::Database;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]

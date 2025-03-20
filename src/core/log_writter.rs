@@ -1,4 +1,4 @@
-use crate::write_batch::WriteBatch;
+use crate::core::write_batch::WriteBatch;
 
 pub struct LogWritter;
 

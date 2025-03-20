@@ -1,8 +1,8 @@
 use thiserror::Error;
 
-use crate::log_writter::LogWritter;
-use crate::mem_table::MemTable;
-use crate::write_batch::WriteBatch;
+use crate::core::log_writter::LogWritter;
+use crate::core::mem_table::MemTable;
+use crate::core::write_batch::WriteBatch;
 
 #[derive(Debug, Error)]
 pub enum DBError {
@@ -46,5 +46,26 @@ impl Database {
     pub fn delte(&mut self, k: &String) -> Result<()> {
         self.mmtable.delete(k);
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_put_and_read() {
+        let mut db = Database::new();
+        db.put(&String::from("123"), &String::from("456")).unwrap();
+        assert_eq!(db.get(&String::from("123")).unwrap(), &String::from("456"));
+    }
+
+    #[test]
+    fn test_delete() {
+        let mut db = Database::new();
+        db.put(&String::from("123"), &String::from("456")).unwrap();
+        assert_eq!(db.get(&String::from("123")).unwrap(), &String::from("456"));
+        db.delte(&String::from("123")).unwrap();
+        assert_eq!(db.get(&String::from("123")).is_err(), true);
     }
 }
