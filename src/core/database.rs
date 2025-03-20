@@ -24,7 +24,7 @@ impl Database {
     pub fn new() -> Self {
         Self {
             mmtable: MemTable::new(),
-            log_writter: LogWritter::new(),
+            log_writter: LogWritter::new("/tmp/db.log"),
         }
     }
 
@@ -43,7 +43,7 @@ impl Database {
         }
     }
 
-    pub fn delte(&mut self, k: &String) -> Result<()> {
+    pub fn delete(&mut self, k: &String) -> Result<()> {
         self.mmtable.delete(k);
         Ok(())
     }
@@ -65,7 +65,7 @@ mod tests {
         let mut db = Database::new();
         db.put(&String::from("123"), &String::from("456")).unwrap();
         assert_eq!(db.get(&String::from("123")).unwrap(), &String::from("456"));
-        db.delte(&String::from("123")).unwrap();
+        db.delete(&String::from("123")).unwrap();
         assert_eq!(db.get(&String::from("123")).is_err(), true);
     }
 }

@@ -1,5 +1,17 @@
 use bytes::{BufMut, BytesMut};
 
+/*
+WriteBatch format:
++---------------+---------------+----------------------------------------+
+| Sequence (8B) | Count (4B)    | Record 1 | Record 2 | ... | Record N   |
++---------------+---------------+----------------------------------------+
+
+Record format:
++-----------+------------+-----------+------------+-----------+
+| Type (1B) | Key Length | Key Bytes | Val Length | Val Bytes |
++-----------+------------+-----------+------------+-----------+
+*/
+
 pub struct WriteBatch {
     data: BytesMut,
 }
