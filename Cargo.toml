@@ -8,3 +8,4 @@ thiserror = "*"
 bytes = { version = "*", features = ["serde"] }
 clap = { version = "*", features = ["derive"] }
 leveldb = "*"
+crc = "*"

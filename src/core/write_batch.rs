@@ -1,4 +1,4 @@
-use bytes::BytesMut;
+use bytes::{Bytes, BytesMut};
 
 /*
 WriteBatch format:
@@ -42,6 +42,10 @@ impl WriteBatch {
         self.data
             .extend_from_slice(&[ValueType::KTypeDeletion as u8]);
         self.put_length_prefixed_data(key.clone());
+    }
+
+    pub fn get_data(&self) -> Bytes {
+        self.data.clone().freeze()
     }
 
     fn increase_count(&mut self) {
