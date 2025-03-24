@@ -46,6 +46,7 @@ impl Database {
     pub fn delete(&mut self, k: &String) -> Result<()> {
         let mut write_batch = WriteBatch::new();
         write_batch.delete(k.clone());
+        self.log_writter.add_record(write_batch);
         self.mmtable.delete(k);
         Ok(())
     }
