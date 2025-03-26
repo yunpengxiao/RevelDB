@@ -1,13 +1,13 @@
-use std::collections::HashMap;
+use crossbeam_skiplist::SkipMap;
 
 pub struct MemTable {
-    table: HashMap<String, String>,
+    table: SkipMap<String, String>,
 }
 
 impl MemTable {
     pub fn new() -> Self {
         Self {
-            table: HashMap::new(),
+            table: SkipMap::new(),
         }
     }
 
@@ -15,8 +15,11 @@ impl MemTable {
         self.table.insert(k, v);
     }
 
-    pub fn get(&self, k: &String) -> Option<&String> {
-        self.table.get(k)
+    pub fn get(&self, k: &String) -> Option<String> {
+        match &self.table.get(k) {
+            Some(kv) => Some(kv.value().clone()),
+            None => None,
+        }
     }
 
     pub fn delete(&mut self, k: &String) {

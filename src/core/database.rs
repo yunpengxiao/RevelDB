@@ -36,7 +36,7 @@ impl Database {
         Ok(())
     }
 
-    pub fn get(&self, k: &String) -> Result<&String> {
+    pub fn get(&self, k: &String) -> Result<String> {
         match self.mmtable.get(k) {
             Some(v) => Ok(v),
             None => Err(DBError::ReadError),
@@ -60,14 +60,14 @@ mod tests {
     fn test_put_and_read() {
         let mut db = Database::new();
         db.put(&String::from("123"), &String::from("456")).unwrap();
-        assert_eq!(db.get(&String::from("123")).unwrap(), &String::from("456"));
+        assert_eq!(db.get(&String::from("123")).unwrap(), String::from("456"));
     }
 
     #[test]
     fn test_delete() {
         let mut db = Database::new();
         db.put(&String::from("123"), &String::from("456")).unwrap();
-        assert_eq!(db.get(&String::from("123")).unwrap(), &String::from("456"));
+        assert_eq!(db.get(&String::from("123")).unwrap(), String::from("456"));
         db.delete(&String::from("123")).unwrap();
         assert_eq!(db.get(&String::from("123")).is_err(), true);
     }
