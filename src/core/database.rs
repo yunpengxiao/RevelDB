@@ -4,6 +4,8 @@ use crate::core::log_writter::LogWritter;
 use crate::core::mem_table::MemTable;
 use crate::core::write_batch::WriteBatch;
 
+use super::write_batch::ValueType;
+
 #[derive(Debug, Error)]
 pub enum DBError {
     #[error("Write Error")]
@@ -31,8 +33,16 @@ impl Database {
     pub fn put(&mut self, k: &String, v: &String) -> Result<()> {
         let mut write_batch = WriteBatch::new();
         write_batch.put(k.clone(), v.clone());
-        self.log_writter.add_record(write_batch);
-        self.mmtable.put(k.clone(), v.clone());
+        self.log_writter.add_record(&write_batch);
+        // we just add the key directly into the memtable here,
+        // But for batch operations we need to get the ops from
+        // write batch like this: https://github.com/google/leveldb/blob/main/db/write_batch.cc#L42
+        self.mmtable.add(
+            write_batch.get_sequence(),
+            ValueType::KTypeValue,
+            k.clone(),
+            v.clone(),
+        );
         Ok(())
     }
 
@@ -46,8 +56,16 @@ impl Database {
     pub fn delete(&mut self, k: &String) -> Result<()> {
         let mut write_batch = WriteBatch::new();
         write_batch.delete(k.clone());
-        self.log_writter.add_record(write_batch);
-        self.mmtable.delete(k);
+        self.log_writter.add_record(&write_batch);
+        // we just add the key directly into the memtable here,
+        // But for batch operations we need to get the ops from
+        // write batch like this: https://github.com/google/leveldb/blob/main/db/write_batch.cc#L42
+        self.mmtable.add(
+            write_batch.get_sequence(),
+            ValueType::KTypeDeletion,
+            k.clone(),
+            String::from(""),
+        );
         Ok(())
     }
 }

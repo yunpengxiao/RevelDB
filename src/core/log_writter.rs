@@ -4,7 +4,8 @@ use crc::{CRC_32_AUTOSAR, Crc};
 use crate::core::write_batch::WriteBatch;
 use std::{fs::File, io::Write};
 
-/*
+/* Block Format:
+
 +-----------------+--------------------------------------------------+
 |     Header      |                     Data/Payload                  |
 +-----------------+--------------------------------------------------+
@@ -42,7 +43,7 @@ impl LogWritter {
     }
 
     // It will append a header even the write batch has 0 len data.
-    pub fn add_record(&mut self, write_batch: WriteBatch) {
+    pub fn add_record(&mut self, write_batch: &WriteBatch) {
         let wb_data = write_batch.get_data();
         let mut left = wb_data.len();
         let mut written = 0;

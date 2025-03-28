@@ -1,5 +1,7 @@
 use bytes::{Bytes, BytesMut};
 
+use super::mem_table::{self, MemTable};
+
 /*
 WriteBatch format:
 +---------------+---------------+----------------------------------------+
@@ -17,7 +19,7 @@ pub struct WriteBatch {
 }
 
 #[repr(u8)]
-enum ValueType {
+pub enum ValueType {
     KTypeDeletion = 0x0,
     KTypeValue = 0x1,
 }
@@ -28,6 +30,10 @@ impl WriteBatch {
     pub fn new() -> Self {
         let data = BytesMut::zeroed(Self::HEADER_SIZE);
         Self { data }
+    }
+
+    pub fn get_sequence(&self) -> u64 {
+        u64::from_le_bytes(self.data[..8].try_into().unwrap())
     }
 
     pub fn put(&mut self, key: String, value: String) {

@@ -1,3 +1,4 @@
+use super::write_batch::ValueType;
 use crossbeam_skiplist::SkipMap;
 
 pub struct MemTable {
@@ -11,8 +12,12 @@ impl MemTable {
         }
     }
 
-    pub fn put(&mut self, k: String, v: String) {
-        self.table.insert(k, v);
+    pub fn add(&mut self, sequence: u64, k_type: ValueType, k: String, v: String) {
+        match k_type {
+            ValueType::KTypeValue => self.table.insert(k, v),
+            ValueType::KTypeDeletion => self.table.remove(&k).unwrap(),
+            _ => panic!("something wrong"),
+        };
     }
 
     pub fn get(&self, k: &String) -> Option<String> {
@@ -20,9 +25,5 @@ impl MemTable {
             Some(kv) => Some(kv.value().clone()),
             None => None,
         }
-    }
-
-    pub fn delete(&mut self, k: &String) {
-        self.table.remove(k);
     }
 }
