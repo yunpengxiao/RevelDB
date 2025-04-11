@@ -74,7 +74,12 @@ impl Benchmark {
         self.db
             .put(&String::from("123"), &String::from("456"))
             .unwrap();
-        println!("{}", self.db.get(&String::from("123")).unwrap());
+        println!(
+            "{}",
+            self.db
+                .get(&String::from("123"))
+                .expect_err("Testing expect_err")
+        );
     }
 }
 

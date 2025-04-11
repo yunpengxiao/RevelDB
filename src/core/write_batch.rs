@@ -1,6 +1,7 @@
 use bytes::{Bytes, BytesMut};
 
 use super::mem_table::{self, MemTable};
+use super::utils;
 
 /*
 WriteBatch format:
@@ -65,42 +66,8 @@ impl WriteBatch {
 
     fn put_length_prefixed_data(&mut self, data: String) {
         let mut buf = [0; 5];
-        let write_len = self.encode_varint_32(&mut buf, data.as_bytes().len() as u32);
+        let write_len = utils::encode_varint_32(&mut buf, data.as_bytes().len() as u32);
         self.data.extend_from_slice(&buf[..write_len]);
         self.data.extend_from_slice(data.as_bytes());
-    }
-
-    fn encode_varint_32(&self, dst: &mut [u8], v: u32) -> usize {
-        const B: u8 = 128;
-        let mut bytes_written = 0;
-
-        if v < (1 << 7) {
-            dst[0] = v as u8;
-            bytes_written = 1;
-        } else if v < (1 << 14) {
-            dst[0] = (v as u8) | B;
-            dst[1] = (v >> 7) as u8;
-            bytes_written = 2;
-        } else if v < (1 << 21) {
-            dst[0] = (v as u8) | B;
-            dst[1] = ((v >> 7) as u8) | B;
-            dst[2] = (v >> 14) as u8;
-            bytes_written = 3;
-        } else if v < (1 << 28) {
-            dst[0] = (v as u8) | B;
-            dst[1] = ((v >> 7) as u8) | B;
-            dst[2] = ((v >> 14) as u8) | B;
-            dst[3] = (v >> 21) as u8;
-            bytes_written = 4;
-        } else {
-            dst[0] = (v as u8) | B;
-            dst[1] = ((v >> 7) as u8) | B;
-            dst[2] = ((v >> 14) as u8) | B;
-            dst[3] = ((v >> 21) as u8) | B;
-            dst[4] = (v >> 28) as u8;
-            bytes_written = 5;
-        }
-
-        bytes_written
     }
 }
